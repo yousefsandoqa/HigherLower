@@ -1,42 +1,124 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+  color: #222;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.game-container {
   text-align: center;
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  width: 300px;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.number-display {
+  font-size: 3rem;
+  margin: 1rem 0;
+  color: #444;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.buttons button {
+  margin: 0.5rem;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 12px;
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.buttons button:hover {
+  background-color: #45a049;
 }
 
-.card {
-  padding: 2em;
+.status {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
 }
 
-.read-the-docs {
-  color: #888;
+.score {
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+.restart-button {
+  margin-top: 1rem;
+  padding: 0.5rem 1.2rem;
+  background-color: #ff4081;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.restart-button:hover {
+  background-color: #e91e63;
+}
+
+.history-section {
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+.history-item {
+  margin: 0.2rem 0;
+  padding: 0.5rem;
+  background-color: #f1f1f1;
+  border-radius: 8px;
+}
+.history-item.correct {
+  background-color: #c8e6c9;
+}
+.history-item.incorrect {
+  background-color: #ffcdd2;
+}
+.history-item span {
+  font-weight: bold;
+}
+.history-item span.correct {
+  color: #388e3c;
+}
+.history-item span.incorrect {
+  color: #d32f2f;
+}
+@keyframes floatEmoji {
+  0%   { transform: translateY(0) rotate(0deg); }
+  50%  { transform: translateY(-30px) rotate(30deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+.emoji-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  opacity: 0.1;
+  font-size: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  pointer-events: none;
+  gap: 1.5rem;
+}
+
+.emoji-background span {
+  width: 2rem;
+  height: 2rem;
+  text-align: center;
+  margin: 0.5rem;
+  animation: floatEmoji 3s ease-in-out infinite;
+}
+
+.game-wrapper {
+  position: relative;
+  z-index: 1;
 }
