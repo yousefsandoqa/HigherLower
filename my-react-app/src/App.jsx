@@ -3,7 +3,6 @@ import './App.css'
 
 function App() {
   const [currentNumber, setCurrentNumber] = useState(generateInput())
-  const [setNextNumber] = useState(null)
   const [score, setScore] = useState(0)
   const [gameStatus, setGameStatus] = useState('Start guessing!')
   const [isGameOver, setIsGameOver] = useState(false)
@@ -13,9 +12,10 @@ function App() {
   }
 
   const handleGuess = (guess) => {
+    // Generate new number after each guess
     const newNumber = generateInput()
-    setNextNumber(newNumber)
 
+    // Check if the guess is correct
     const correct =
       (guess === 'higher' && newNumber > currentNumber) ||
       (guess === 'lower' && newNumber < currentNumber)
@@ -31,11 +31,10 @@ function App() {
   }
 
   const restartGame = () => {
-    setCurrentNumber(generateInput())
+    setCurrentNumber(generateInput()) // Reset to a new number
     setScore(0)
     setGameStatus('Start guessing!')
     setIsGameOver(false)
-    setNextNumber(null)
   }
 
   return (
@@ -45,7 +44,7 @@ function App() {
           <span key={i}>{Math.random() > 0.5 ? '⬆️' : '⬇️'}</span>
         ))}
       </div>
-        <div className="game-wrapper">
+      <div className="game-wrapper">
         <div className="game-container">
           <h1>🎮 Higher or Lower</h1>
           <p className="status">{gameStatus}</p>
