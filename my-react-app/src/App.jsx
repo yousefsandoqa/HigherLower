@@ -40,15 +40,12 @@ function App() {
 
   return (
     <>
-      {/* Emoji background goes here */}
       <div className="emoji-background" aria-hidden="true">
         {Array.from({ length: 300 }).map((_, i) => (
           <span key={i}>{Math.random() > 0.5 ? '⬆️' : '⬇️'}</span>
         ))}
       </div>
-  
-      {/* Game UI is wrapped in a foreground container */}
-      <div className="game-wrapper">
+        <div className="game-wrapper">
         <div className="game-container">
           <h1>🎮 Higher or Lower</h1>
           <p className="status">{gameStatus}</p>
