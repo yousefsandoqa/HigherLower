@@ -15,7 +15,7 @@ router = APIRouter(
 def get_user_router(db_con: connection = Depends(get_db_connection)):
     return get_users(db_con)
 
-
+#need to add a post for adding users to the leaderboard
 
 
 

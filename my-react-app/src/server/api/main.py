@@ -1,9 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from server.api.user_router import router as user_router
+from server.api.career_router import router as career_router
 
 app = FastAPI(root_path="/")
 app.include_router(user_router)
+app.include_router(career_router)
 
 origins = [
     "http://127.0.0.1/",
