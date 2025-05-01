@@ -50,6 +50,10 @@ body {
   margin-top: 1rem;
 }
 
+.restart-section {
+  margin-top: 1rem;
+}
+
 .restart-button {
   margin-top: 1rem;
   padding: 0.5rem 1.2rem;
@@ -121,4 +125,31 @@ body {
 .game-wrapper {
   position: relative;
   z-index: 1;
+}
+
+.category-selections {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+select {
+  background-color: #4caf50; /* Green background color */
+  color: white; /* White text color */
+  padding: 10px; /* Increased padding */
+  border-radius: 8px; /* Rounded edges */
+  border: none; /* Remove border */
+  font-size: 1rem; /* Adjust font size */
+  outline: none; /* Remove outline */
+  cursor: pointer; /* Pointer cursor for better UX */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+select:hover {
+  background-color: #45a049; /* Slightly darker green on hover */
+}
+
+select:focus {
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Add focus shadow */
 }
