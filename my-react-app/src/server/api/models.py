@@ -19,13 +19,16 @@ class Player_Season(BaseModel):
     stat: float
     year: str
 
-
 class Stat_List(BaseModel):
     stat: list[str]
 
 class Stat_List_Year(BaseModel):
     stat: list[str]
     year: str
+
+class Stat_List_Team(BaseModel):
+    stat: list[str]
+    teams: list[str]
 
 class Stat_List_Teams_Year(BaseModel):
     stat: list[str]

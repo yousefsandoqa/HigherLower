@@ -11,6 +11,7 @@ router = APIRouter(
     tags=['career']
 )
 
+#Input is a list of stats
 @router.post("/", response_model=Player_Career)
 def get_career_router(stat_list: Stat_List, db_con: connection = Depends(get_db_connection)):
     return get_career(db_con, stat_list.stat)
