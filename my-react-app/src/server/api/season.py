@@ -35,8 +35,10 @@ def get_player_season_stat(stat_year: Stat_List_Teams_Year, db_con: connection):
         count = count_res[0][0]
 
         rand = random.randint(1, count)
+        # print(f"count:{count}")
+        # print(f"rand:{rand}")
 
-        r = careers[rand]
+        r = careers[rand-1]
 
         player = Player_Season(name=r[0],
                                stat_name = sum_list,
