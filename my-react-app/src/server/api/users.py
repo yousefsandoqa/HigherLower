@@ -20,4 +20,15 @@ def get_users(db_con: connection):
 
     return users
         
+def add_users(user: User, db_con: connection):
+    curs = db_con.cursor()
+    count_query = '''SELECT COUNT(*) FROM user_data'''
+    curs.execute(count_query)
+    count_res = curs.fetchall()
+    count = count_res[0][0] + 1
 
+    try: 
+        curs.execute('''INSERT INTO user_data ("index", name, score) VALUES (%s, %s, %s);''', (count, user.name, user.score))
+        db_con.commit()
+    except psycopg2.Error as err:
+        raise HTTPException(status_code=500, detail=str(err))

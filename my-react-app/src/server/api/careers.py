@@ -5,14 +5,16 @@ from typing import Any
 from server.api.models import Player_Career
 import random
 
-def get_career(db_con: connection):
+def get_career(db_con: connection, stat: list[str]):
     curs = db_con.cursor()
     player = None
+    sum = " + ".join(stat)
 
     try:
-        query = '''SELECT name, years_played, ppg, rpg, apg, bpg, spg 
+        query = f'''SELECT name, SUM({sum})
                     FROM career_stats 
-                    JOIN player ON career_stats.p_index = player.p_index'''
+                    JOIN player ON career_stats.p_index = player.p_index 
+                    GROUP BY name;'''
         curs.execute(query)
         careers = curs.fetchall()
 
@@ -26,12 +28,8 @@ def get_career(db_con: connection):
         r = careers[rand]
 
         player = Player_Career(name=r[0],
-                                years=r[1],
-                                ppg=round(r[2], 2),  
-                                rpg=round(r[3], 2),
-                                apg=round(r[4], 2),
-                                bpg=round(r[5], 2),
-                                spg=round(r[6], 2))
+                               stat_name = sum,
+                                stat = round(r[1],2))
     except psycopg2.Error as err:
         raise HTTPException(status_code=500, detail=str(err))
 

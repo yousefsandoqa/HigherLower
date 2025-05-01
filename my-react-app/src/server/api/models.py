@@ -7,9 +7,8 @@ class User(BaseModel):
 
 class Player_Career(BaseModel):
     name: str
-    years: int
-    ppg: float
-    rpg: float
-    apg: float
-    bpg: float
-    spg: float
+    stat_name: str
+    stat: float
+
+class Stat_List(BaseModel):
+    stat: list[str]
