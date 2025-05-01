@@ -17,7 +17,7 @@ def get_player_season_stat(stat_year: Stat_List_Teams_Year, db_con: connection):
                     JOIN player ON player_season.p_index = player.p_index 
                     JOIN team on team.t_idx = player_season.t_idx
                     WHERE year = '{stat_year.year}'
-                      AND abr IN '({",".join(stat_year.teams)})'
+                      AND abr IN ({",".join(stat_year.teams)})
                     GROUP BY player.name;'''
         
         curs.execute(query)
