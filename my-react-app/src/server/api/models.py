@@ -5,6 +5,9 @@ class User(BaseModel):
     name: str
     score: int
 
+class Stat_List(BaseModel):
+    stat: list[str]
+
 class Player_Career(BaseModel):
     name: str
     stat_name: str
