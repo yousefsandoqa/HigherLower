@@ -13,5 +13,5 @@ router = APIRouter(
 )
 
 @router.post("/stat_year/", response_model=Player_Season)
-def get_player_season_router(stat: Stat_List_Year, db_con: connection = Depends(get_db_connection)):
+def get_player_season_router(stat: Stat_List_Teams_Year, db_con: connection = Depends(get_db_connection)):
     return get_player_season_stat(stat, db_con)
