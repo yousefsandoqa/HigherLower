@@ -4,7 +4,7 @@ from server.database.db import get_db_connection
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from server.api.models import Stat_List_Teams_Year, Stat_List_Team, Player_Season, Stat_List_Teams_Acc_Year
-from server.api.season import get_player_season_stat_team_year, get_player_season_stat_team
+from server.api.season import get_player_season_stat_team_year, get_player_season_stat_team, get_player_season_stat_team_acc_year
 #from server.api.models import Player_Season
 
 router = APIRouter(
