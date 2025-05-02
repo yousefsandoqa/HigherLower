@@ -15,36 +15,36 @@ function App() {
 
   const teams = [
     'All Teams', 
-    'ATL Atlanta Hawks',
-    'BOS Boston Celtics',
-    'BKN Brooklyn Nets',
-    'CHA Charlotte Hornets',
-    'CHI Chicago Bulls',
-    'CLE Cleveland Cavaliers',
-    'DAL Dallas Mavericks',
-    'DEN Denver Nuggets',
-    'DET Detroit Pistons',
-    'GSW Golden State Warriors',
-    'HOU Houston Rockets',
-    'IND Indiana Pacers',
-    'LAC Los Angeles Clippers',
-    'LAL Los Angeles Lakers',
-    'MEM Memphis Grizzlies',
-    'MIA Miami Heat',
-    'MIL Milwaukee Bucks',
-    'MIN Minnesota Timberwolves',
-    'NOP New Orleans Pelicans',
-    'NYK New York Knicks',
-    'OKC Oklahoma City Thunder',
-    'ORL Orlando Magic',
-    'PHI Philadelphia 76ers',
-    'PHX Phoenix Suns',
-    'POR Portland Trail Blazers',
-    'SAC Sacramento Kings',
-    'SAS San Antonio Spurs',
-    'TOR Toronto Raptors',
-    'UTA Utah Jazz',
-    'WAS Washington Wizards'
+    'ATL',
+    'BOS',
+    'BKN',
+    'CHA',
+    'CHI',
+    'CLE',
+    'DAL',
+    'DEN',
+    'DET',
+    'GSW',
+    'HOU',
+    'IND',
+    'LAC',
+    'LAL',
+    'MEM',
+    'MIA',
+    'MIL',
+    'MIN',
+    'NOP',
+    'NYK',
+    'OKC',
+    'ORL',
+    'PHI',
+    'PHX',
+    'POR',
+    'SAC',
+    'SAS',
+    'TOR',
+    'UTA',
+    'WAS',
   ]
 
   // Generate years from 1980 to the current year in the format "1980-81"
@@ -63,26 +63,29 @@ function App() {
     try {
       // Prepare payload based on selections
       let payload = {};
+      let endpoint = 'http://127.0.0.1:8000/season/stat_team';
       
       if (selectedYear === 'All Time' && selectedTeam === 'All Teams') {
         payload = {
-          stat: statCategory,
+          stat: [statCategory],
         };
       } else if (selectedYear === 'All Time') {
         payload = {
-          stat: statCategory,
-          teams: selectedTeam,
+          stat: [statCategory],
+          teams: [selectedTeam],
         };
+        endpoint = 'http://127.0.0.1:8000/season/stat_team';
       } else {
         payload = {
-          stat: statCategory,
-          teams: selectedTeam,
+          stat: [statCategory],
+          teams: [selectedTeam],
           year: selectedYear,
         };
+        endpoint = 'http://127.0.0.1:8000/season/stat_team_year';
       }
       
       // Replace with your actual API endpoint
-      const response = await axios.get('http://127.0.0.1:8000/season/stat_year', { params: payload });
+      const response = await axios.get(endpoint, { params: payload });
       console.log('Using player data:', response.data);
       console.log('currentNumber:', currentNumber);
       console.log('NewNumber:', newNumber);
@@ -90,7 +93,7 @@ function App() {
     } catch (error) {
       console.error('Error fetching player data:', error);
       let defaultReturn = {}
-      defaultReturn.name = generateInput();
+      defaultReturn.name = "Default Player "+generateInput();
       defaultReturn.stat = generateInput();
       defaultReturn.year = '1725-26';
       console.log('Using default player data:', defaultReturn);
