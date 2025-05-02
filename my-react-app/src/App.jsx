@@ -146,7 +146,7 @@ function App() {
         name: playerData.name,
         year: playerData.year
       });
-      setCurrentNumber(playerData.stat+(Math.floor(Math.random() * 5)-2));
+      setCurrentNumber(playerData.stat+(Math.floor(Math.random() * 5)));
       setNewNumber(playerData.stat);
       console.log('Player data:', playerData);
       console.log('currentNumber:', currentNumber);
