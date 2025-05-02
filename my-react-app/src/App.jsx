@@ -68,6 +68,7 @@ function App() {
       if (selectedYear === 'All Time' && selectedTeam === 'All Teams') {
         payload = {
           stat: [statCategory],
+          teams: teams
         };
       } else if (selectedYear === 'All Time') {
         payload = {
@@ -85,7 +86,7 @@ function App() {
       }
       
       // Replace with your actual API endpoint
-      const response = await axios.get(endpoint, { params: payload });
+      const response = await axios.post(endpoint, payload);
       console.log('Using player data:', response.data);
       console.log('currentNumber:', currentNumber);
       console.log('NewNumber:', newNumber);
