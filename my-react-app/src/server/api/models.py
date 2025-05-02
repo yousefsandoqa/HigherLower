@@ -34,3 +34,9 @@ class Stat_List_Teams_Year(BaseModel):
     stat: list[str]
     teams: list[str]
     year: str
+
+class Stat_List_Teams_Acc_Year(BaseModel):
+    stat: list[str]
+    teams: list[str]
+    year: str
+    accolade: str

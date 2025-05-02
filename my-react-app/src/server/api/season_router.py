@@ -3,7 +3,7 @@ from psycopg2.extensions import connection
 from server.database.db import get_db_connection
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
-from server.api.models import Stat_List_Teams_Year, Stat_List_Team, Player_Season
+from server.api.models import Stat_List_Teams_Year, Stat_List_Team, Player_Season, Stat_List_Teams_Acc_Year
 from server.api.season import get_player_season_stat_team_year, get_player_season_stat_team
 #from server.api.models import Player_Season
 
@@ -24,3 +24,8 @@ def get_player_season_router(stat: Stat_List_Teams_Year, db_con: connection = De
 @router.post("/stat_team/", response_model=Player_Season)
 def get_player_season_router(stat: Stat_List_Team, db_con: connection = Depends(get_db_connection)):
     return get_player_season_stat_team(stat, db_con)
+
+#Input is a list of stats, and a list of teams, accolade, and year
+@router.post("/stat_team_year_acc/", response_model=Player_Season)
+def get_player_season_router(stat: Stat_List_Teams_Acc_Year, db_con: connection = Depends(get_db_connection)):
+    return get_player_season_stat_team_acc_year(stat, db_con)
