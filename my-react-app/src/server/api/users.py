@@ -9,7 +9,7 @@ def get_users(db_con: connection):
     users = []
 
     try:
-        query = '''SELECT * FROM user_data'''
+        query = '''SELECT * FROM user_data ORDER BY score DESC LIMIT 5'''
         curs.execute(query)
         results = curs.fetchall()
         for r in results:
