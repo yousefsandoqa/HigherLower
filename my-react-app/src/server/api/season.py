@@ -115,7 +115,7 @@ def get_player_season_stat_team_acc_year(stat_year: Stat_List_Teams_Acc_Year, db
 
         count_query = f'''SELECT COUNT(*) FROM player_season 
                           JOIN team on player_season.t_index = team.t_index
-                          WHERE year = '{stat_year.year}' AND team.abr IN ({team_list_joined})'''
+                          WHERE year = '{stat_year.year}' AND team.abr IN ({team_list_joined}) AND player_season.p_index IN (SELECT p_index FROM accolades WHERE award = '{stat_year.accolade}')'''
         curs.execute(count_query)
         count_res = curs.fetchall()
         count = count_res[0][0]
