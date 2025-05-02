@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
 import './App.css'
 
@@ -12,6 +12,9 @@ function App() {
   const [selectedTeam, setSelectedTeam] = useState('All Teams'); // Default team selection
   const [selectedYear, setSelectedYear] = useState('All Time'); // Default year selection
   const [player, setPlayer] = useState({name: '', year: ''}); // Player object with name and year
+  const [leaders, setLeaders] = useState([]);
+  const [username, setUsername] = useState('');
+  const [scoreSubmitted, setScoreSubmitted] = useState(false);
 
   const teams = [
     'All Teams', 
@@ -58,6 +61,31 @@ function App() {
   function generateInput() {
     return Math.floor(Math.random() * 20) + 1
   }
+
+  const getLeaders = async () => {
+    try {
+      let endpoint = 'http://127.0.0.1:8000/user';
+      const response = await axios.get(endpoint);
+      const data = response.data;
+      console.log('Leaders:', data);
+      setLeaders(data);
+    } catch (error) {
+      console.error('Error fetching leaders:', error);
+      // Set default leaders if API fails
+      setLeaders([
+        { index: 1, name: "Player 1", score: 100 },
+        { index: 2, name: "Player 2", score: 90 },
+        { index: 3, name: "Player 3", score: 80 },
+        { index: 4, name: "Player 4", score: 70 },
+        { index: 5, name: "Player 5", score: 60 }
+      ]);
+    }
+  }
+
+  // Load leaders when component mounts
+  useEffect(() => {
+    getLeaders();
+  }, []);
 
   const fetchPlayerData = async () => {
     try {
@@ -114,7 +142,6 @@ function App() {
     if (correct) {
       setScore(score + 1);
       setGameStatus(`Correct! It was ${newNumber}. Keep going!`);
-      
 
       // Get API data with payload of selectedTeam, selectedYear, and statCategory
       const playerData = await fetchPlayerData();
@@ -131,12 +158,19 @@ function App() {
     } else {
       setGameStatus(`Wrong! It was ${newNumber}. Game over.`);
       setIsGameOver(true);
+      setScoreSubmitted(false); // Reset submission status for new game over
+      
+      // Don't automatically get leaders here anymore
+      // We'll get them after score submission
     }
   };
 
   const restartGame = async () => {
+    getLeaders();
     setScore(0);
     setIsGameOver(false);
+    setUsername('');
+    setScoreSubmitted(false);
     
     // Get API data with payload of selectedTeam, selectedYear, and statCategory
     const playerData = await fetchPlayerData();
@@ -170,6 +204,35 @@ function App() {
   const handleYearChange = (e) => {
     setSelectedYear(e.target.value)
   }
+
+  // Function to handle username submission
+  const handleSubmitScore = async () => {
+    if (!username.trim() || !isGameOver || scoreSubmitted) return;
+    
+    try {
+      // Create user object according to the API requirements
+      const userScore = {
+        index: 0, // Index doesn't matter as per the API comments
+        name: username.trim().substring(0, 3).toUpperCase(), // Ensure 3 letters, uppercase
+        score: score
+      };
+      
+      // Post score to the API
+      await axios.post('http://127.0.0.1:8000/user/add/', userScore);
+      console.log('Score submitted successfully');
+      
+      // Mark score as submitted and refresh leaderboard
+      setScoreSubmitted(true);
+      await getLeaders();
+    } catch (error) {
+      console.error('Error submitting score:', error);
+    }
+  };
+
+  const handleUsernameChange = (e) => {
+    // Limit input to 3 characters
+    setUsername(e.target.value.substring(0, 3));
+  };
 
   return (
     <>
@@ -238,16 +301,56 @@ function App() {
           <div className="team-category">Selected Team: {selectedTeam}</div>
           <div className="year-category">Selected Year: {selectedYear}</div>
           <div className="buttons">
-            <button onClick={() => handleGuess('higher')} disabled={isGameOver}>Higher</button>
-            <button onClick={() => handleGuess('lower')} disabled={isGameOver}>Lower</button>
+            <button id="higher-btn" onClick={() => handleGuess('higher')} disabled={isGameOver}>Higher</button>
+            <button id="lower-btn" onClick={() => handleGuess('lower')} disabled={isGameOver}>Lower</button>
           </div>
           <div className="score">Score: {score}</div>
+          
+          {isGameOver && !scoreSubmitted && (
+            <><div className="game-over-message">
+              <h2>Game Over! Your score: {score}</h2>
+              <p>Enter your initials to submit your score:</p>
+            </div>
+            <div className="score-submission">
+              <input
+                type="text"
+                placeholder="AAA"
+                value={username}
+                onChange={handleUsernameChange}
+                maxLength={3}
+                style={{ textTransform: 'uppercase', width: '60px', textAlign: 'center' }}
+              />
+              <button 
+                onClick={handleSubmitScore}
+                disabled={!username.trim()}
+              >
+                Submit Score
+              </button>
+            </div>
+            </>
+          )}
+          
           {isGameOver && (
             <button className="restart-button" onClick={restartGame}>Restart Game</button>
           )}
+          
           <div className="history-section">
-            <h2>High Scores (connect?)</h2>
-            <p>Connect the DB to load this area.</p>
+            <h2>High Scores: </h2>
+            <ul style={{ 
+              listStyleType: 'none', 
+              textAlign: 'center',
+              padding: 0
+            }}>
+              {leaders.length > 0 ? (
+                leaders.map((leader, index) => (
+                  <li key={index}>{leader.name}: {leader.score}</li>
+                ))
+              ) : (
+                <li>Loading high scores...</li>
+              )}
+            </ul>
+
+            {leaders.length === 0 && <p>Connect the DB to load this area.</p>}
           </div>
         </div>
       </div>
