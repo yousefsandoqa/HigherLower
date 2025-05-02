@@ -1,14 +1,17 @@
 import { useState } from 'react'
+import axios from 'axios'
 import './App.css'
 
 function App() {
-  const [currentNumber, setCurrentNumber] = useState(generateInput())
-  const [score, setScore] = useState(0)
-  const [gameStatus, setGameStatus] = useState('Select your stat categories!')
-  const [isGameOver, setIsGameOver] = useState(false)
-  const [statCategory, setStatCategory] = useState('PPG') // Default stat category
-  const [selectedTeam, setSelectedTeam] = useState('All Teams') // Default team selection
-  const [selectedYear, setSelectedYear] = useState('All Time') // Default year selection
+  const [currentNumber, setCurrentNumber] = useState(Math.floor(Math.random() * 15)+1);
+  const[newNumber, setNewNumber] = useState(0);
+  const [score, setScore] = useState(0);
+  const [gameStatus, setGameStatus] = useState('');
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [statCategory, setStatCategory] = useState('PPG'); // Default stat category
+  const [selectedTeam, setSelectedTeam] = useState('All Teams'); // Default team selection
+  const [selectedYear, setSelectedYear] = useState('All Time'); // Default year selection
+  const [player, setPlayer] = useState({name: '', year: ''}); // Player object with name and year
 
   const teams = [
     'All Teams', 
@@ -53,31 +56,104 @@ function App() {
   }).reverse()] // Reverse the array to show the most recent year first
 
   function generateInput() {
-    return Math.floor(Math.random() * 100) + 1
+    return Math.floor(Math.random() * 20) + 1
   }
 
-  const handleGuess = (guess) => {
-    const newNumber = generateInput()
+  const fetchPlayerData = async () => {
+    try {
+      // Prepare payload based on selections
+      let payload = {};
+      
+      if (selectedYear === 'All Time' && selectedTeam === 'All Teams') {
+        payload = {
+          stat: statCategory,
+        };
+      } else if (selectedYear === 'All Time') {
+        payload = {
+          stat: statCategory,
+          teams: selectedTeam,
+        };
+      } else {
+        payload = {
+          stat: statCategory,
+          teams: selectedTeam,
+          year: selectedYear,
+        };
+      }
+      
+      // Replace with your actual API endpoint
+      const response = await axios.get('http://127.0.0.1:8000/season/stat_year', { params: payload });
+      console.log('Using player data:', response.data);
+      console.log('currentNumber:', currentNumber);
+      console.log('NewNumber:', newNumber);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching player data:', error);
+      let defaultReturn = {}
+      defaultReturn.name = generateInput();
+      defaultReturn.stat = generateInput();
+      defaultReturn.year = '1725-26';
+      console.log('Using default player data:', defaultReturn);
+      console.log('currentNumber:', currentNumber);
+      console.log('NewNumber:', newNumber);
+      return defaultReturn;
+    }
+  };
+
+  const handleGuess = async (guess) => {
+    console.log('Current Number:', currentNumber);
+    console.log('New Number:', newNumber);
     const correct =
       (guess === 'higher' && newNumber > currentNumber) ||
-      (guess === 'lower' && newNumber < currentNumber)
+      (guess === 'lower' && newNumber < currentNumber);
 
     if (correct) {
-      setScore(score + 1)
-      setGameStatus(`Correct! It was ${newNumber}. Keep going!`)
-      setCurrentNumber(newNumber)
-    } else {
-      setGameStatus(`Wrong! It was ${newNumber}. Game over.`)
-      setIsGameOver(true)
-    }
-  }
+      setScore(score + 1);
+      setGameStatus(`Correct! It was ${newNumber}. Keep going!`);
+      
 
-  const restartGame = () => {
-    setCurrentNumber(generateInput())
-    setScore(0)
-    setGameStatus('Select your stat categories!')
-    setIsGameOver(false)
-  }
+      // Get API data with payload of selectedTeam, selectedYear, and statCategory
+      const playerData = await fetchPlayerData();
+      setCurrentNumber(newNumber);
+      setNewNumber(playerData.stat);
+      if (playerData) {
+        setPlayer({
+          name: playerData.name,
+          year: playerData.year
+        });
+        setNewNumber(playerData.stat);
+        setGameStatus(`Your new player is: ${playerData.name} (${playerData.year || 'All Time'})!`);
+      }
+    } else {
+      setGameStatus(`Wrong! It was ${newNumber}. Game over.`);
+      setIsGameOver(true);
+    }
+  };
+
+  const restartGame = async () => {
+    setScore(0);
+    setIsGameOver(false);
+    
+    // Get API data with payload of selectedTeam, selectedYear, and statCategory
+    const playerData = await fetchPlayerData();
+    
+    if (playerData) {
+      setPlayer({
+        name: playerData.name,
+        year: playerData.year
+      });
+      setCurrentNumber(playerData.stat+(Math.floor(Math.random() * 5)-2));
+      setNewNumber(playerData.stat);
+      console.log('Player data:', playerData);
+      console.log('currentNumber:', currentNumber);
+      console.log('NewNumber:', newNumber);
+      // Use playerData.name directly instead of player.name from state
+      setGameStatus(`Your starting player is: ${playerData.name} (${playerData.year || 'All Time'})!`);
+    } else {
+      // setCurrentNumber(generateInput());
+      setGameStatus('Failed to load player data. Using random number.');
+    }
+  };
 
   const handleStatChange = (e) => {
     setStatCategory(e.target.value)
@@ -112,6 +188,7 @@ function App() {
                 disabled={!isGameOver && score > 0}
               >
                 <option value="PPG">Points Per Game (PPG)</option>
+                <option value="APG">Points Per Game (PPG)</option>
                 <option value="RPG">Rebounds Per Game (RPG)</option>
                 <option value="BPG">Blocks Per Game (BPG)</option>
                 <option value="SPG">Steals Per Game (SPG)</option>
