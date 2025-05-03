@@ -271,7 +271,7 @@ function App() {
                 disabled={!isGameOver && score > 0}
               >
                 <option value="PPG">Points Per Game (PPG)</option>
-                <option value="APG">Points Per Game (PPG)</option>
+                <option value="APG">Points Per Game/Accolades (PPG)</option>
                 <option value="RPG">Rebounds Per Game (RPG)</option>
                 <option value="BPG">Blocks Per Game (BPG)</option>
                 <option value="SPG">Steals Per Game (SPG)</option>
