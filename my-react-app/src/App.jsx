@@ -95,28 +95,33 @@ function App() {
       let endpoint = 'http://127.0.0.1:8000/season/stat_team';
 
       if (statCategory === 'PPGA') {
-        endpoint = 'http://127.0.0.1:8000/season/stat_team_accolades';
-      }
-      
-      if (selectedYear === 'All Time' && selectedTeam === 'All Teams') {
         payload = {
           stat: [statCategory],
           teams: teams
         };
-      } else if (selectedYear === 'All Time') {
-        payload = {
-          stat: [statCategory],
-          teams: [selectedTeam],
-        };
-        endpoint = 'http://127.0.0.1:8000/season/stat_team';
-      } else {
-        payload = {
-          stat: [statCategory],
-          teams: [selectedTeam],
-          year: selectedYear,
-        };
-        endpoint = 'http://127.0.0.1:8000/season/stat_team_year';
+        endpoint = 'http://127.0.0.1:8000/season/stat_accolades';
       }
+      else {
+        if (selectedYear === 'All Time' && selectedTeam === 'All Teams') {
+          payload = {
+            stat: [statCategory],
+            teams: teams
+          };
+        } else if (selectedYear === 'All Time') {
+          payload = {
+            stat: [statCategory],
+            teams: [selectedTeam],
+          };
+          endpoint = 'http://127.0.0.1:8000/season/stat_team';
+        } else {
+          payload = {
+            stat: [statCategory],
+            teams: [selectedTeam],
+            year: selectedYear,
+          };
+          endpoint = 'http://127.0.0.1:8000/season/stat_team_year';
+        }
+  }
       
       // Replace with your actual API endpoint
       const response = await axios.post(endpoint, payload);
@@ -162,11 +167,24 @@ function App() {
           stat: playerData.stat_name
         });
         setNewNumber(playerData.stat);
-        setGameStatus(
-          <span>
-            Does <strong>{playerData.name}</strong> have Higher or Lower statistic than the previous player in ({playerData.year || 'All Time'})!
-          </span>
-        );      }
+        
+        if(statCategory != 'ppga') {
+          setGameStatus(
+            <span>
+              Does <strong>{playerData.name}</strong> have Higher or Lower statistic than the previous player in ({playerData.year || 'All Time'})!
+            </span>
+          );
+        }
+        else {
+          setGameStatus(
+            <span>
+              Does <strong>{playerData.name}</strong> have Higher or Lower statistic than the previous player?
+            </span>
+          );
+        }
+
+        
+      }
     } else {
       setGameStatus(`Wrong! It was ${newNumber}. Game over.`);
       setIsGameOver(true);
@@ -206,8 +224,14 @@ function App() {
       console.log('currentNumber:', currentNumber);
       console.log('NewNumber:', newNumber);
       // Use playerData.name directly instead of player.name from state
-      setGameStatus(`Does ${playerData.name} have Higher or Lower statistic than the previous player in (${playerData.year || 'All Time'})!`);
-    } else {
+      if(statCategory != 'PPGA') {
+        setGameStatus(`Does ${playerData.name} have Higher or Lower statistic than the previous player in (${playerData.year || 'All Time'})!`);
+      }
+      else {
+        setGameStatus(`Does ${playerData.name} have Higher or Lower statistic than the previous player?`);
+      }
+      } else {
+
       // setCurrentNumber(generateInput());
       setGameStatus('Failed to load player data. Using random number.');
     }
@@ -257,7 +281,7 @@ function App() {
   return (
     <>
       <div className="emoji-background" aria-hidden="true">
-        {Array.from({ length: 300 }).map((_, i) => (
+        {Array.from({ length: 400 }).map((_, i) => (
           <span key={i}>{Math.random() > 0.5 ? '⬆️' : '⬇️'}</span>
         ))}
       </div>

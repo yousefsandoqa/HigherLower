@@ -96,7 +96,6 @@ def get_player_season_stat_team_acc_year(stat_year: Stat_List_Teams_Acc_Year, db
     sum_list = " + ".join(stat_year.stat)
 
     team_list = [f"'{team}'" for team in stat_year.teams]
-    team_list_joined = ", ".join(team_list)
 
     try:
         query = f'''SELECT player.name, player_season.ppg
@@ -111,10 +110,9 @@ def get_player_season_stat_team_acc_year(stat_year: Stat_List_Teams_Acc_Year, db
         careers = curs.fetchall()
 
         count_query = f'''
-        SELECT COUNT(*) FROM accolades WHERE award = '{stat_year.accolade}'
+            SELECT COUNT(*) FROM accolades
         '''
-
-        curs.execute(count_query, (stat_year.year, stat_year.teams, stat_year.accolade))
+        curs.execute(count_query)
         count_res = curs.fetchall()
         count = count_res[0][0]
         print(f"COUNT: {count}")
