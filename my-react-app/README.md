@@ -39,7 +39,7 @@ Install npm (https://www.npmjs.com/) and Python (https://www.python.org/) if you
 - Launch the web app and API server
 - Note: For this step, you will need to use two separate terminals
 
-## In HigherLower/my-react-app/server/
+## In HigherLower/my-react-app/src/
 
 - Run ‘uvicorn server.api.main:app --reload’
 
