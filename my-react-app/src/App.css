@@ -57,6 +57,20 @@ select {
   padding-right: 1px;
 }
 
+.career-mode {
+  font-size: 1.2rem;
+  margin: 1rem 0;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.career-mode input {
+  width: 25px;
+  padding: 0.5rem;
+  border-radius: 8px;
+  background-color: #4caf50;
+}
+
 .score {
   font-weight: bold;
   margin-top: 1rem;

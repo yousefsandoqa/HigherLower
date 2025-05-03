@@ -16,6 +16,7 @@ function App() {
   const [leaders, setLeaders] = useState([]);
   const [username, setUsername] = useState('');
   const [scoreSubmitted, setScoreSubmitted] = useState(false);
+  const [careerMode, setCareerMode] = useState(false);
 
   const teams = [
     'All Teams', 
@@ -88,6 +89,10 @@ function App() {
     getLeaders();
   }, []);
 
+  const handleCareerMode = (e) => {
+    setCareerMode(e.target.checked);
+  }
+
   const fetchPlayerData = async () => {
     try {
       // Prepare payload based on selections
@@ -107,6 +112,9 @@ function App() {
             stat: [statCategory],
             teams: teams
           };
+          if (careerMode) {
+            endpoint = 'http://127.0.0.1:8000/career';
+          }
         } else if (selectedYear === 'All Time') {
           payload = {
             stat: [statCategory],
@@ -333,6 +341,13 @@ function App() {
               </select>
             </div>
           </div>
+
+
+          { selectedTeam == 'All Teams' && selectedYear === 'All Time' &&
+          <div className='career-mode'>
+              <p>Use Player All Time Career</p>
+              <input type='checkbox' onSelect={handleCareerMode} />
+          </div>}
 
           <div className="restart-section">
             <button className="start-button" onClick={restartGame}>
