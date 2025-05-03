@@ -93,6 +93,10 @@ function App() {
       // Prepare payload based on selections
       let payload = {};
       let endpoint = 'http://127.0.0.1:8000/season/stat_team';
+
+      if (statCategory === 'PPGA') {
+        endpoint = 'http://127.0.0.1:8000/season/stat_team_accolades';
+      }
       
       if (selectedYear === 'All Time' && selectedTeam === 'All Teams') {
         payload = {
@@ -271,10 +275,11 @@ function App() {
                 disabled={!isGameOver && score > 0}
               >
                 <option value="PPG">Points Per Game (PPG)</option>
-                <option value="APG">Points Per Game/Accolades (PPG)</option>
+                <option value="APG">Points Per Game (PPG)</option>
                 <option value="RPG">Rebounds Per Game (RPG)</option>
                 <option value="BPG">Blocks Per Game (BPG)</option>
                 <option value="SPG">Steals Per Game (SPG)</option>
+                <option value="PPGA">Points Per Game w/ Accolades(PPGA)</option>
               </select>
             </div>
 
