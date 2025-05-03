@@ -54,8 +54,8 @@ function App() {
 
   // Generate years from 1980 to the current year in the format "1980-81"
   const currentYear = new Date().getFullYear()
-  const years = ['All Time', ...Array.from({ length: currentYear - 1980 -3 }, (_, i) => {
-    const startYear = 1980 + i
+  const years = ['All Time', ...Array.from({ length: currentYear - 1996 -3 }, (_, i) => {
+    const startYear = 1996 + i
     const endYear = (startYear + 1).toString().slice(-2)
     return `${startYear}-${endYear}`
   }).reverse()] // Reverse the array to show the most recent year first
@@ -124,7 +124,17 @@ function App() {
           };
           endpoint = 'http://127.0.0.1:8000/season/stat_team';
           console.log("second: ", selectedTeam)
-        } else {
+        } 
+        else if (selectedTeam === 'All Teams') {
+          payload = {
+            stat: [statCategory],
+            teams: teams,
+            year: selectedYear
+          };
+          endpoint = 'http://127.0.0.1:8000/season/stat_team_year';
+          console.log("second: ", selectedTeam)
+        }
+        else {
           payload = {
             stat: [statCategory],
             teams: [selectedTeam],
@@ -145,9 +155,16 @@ function App() {
     } catch (error) {
       console.error('Error fetching player data:', error);
       let defaultReturn = {}
-      defaultReturn.name = "Default Player "+generateInput();
+      const defaults = [
+        "Michael Jordan", "LeBron James", "Kobe Bryant", 
+        "Stephen Curry", "Magic Johnson", "Larry Bird",
+        "Tim Duncan", "Shaquille O'Neal", "Kevin Durant",
+        "Kareem Abdul-Jabbar", "Wilt Chamberlain"
+      ];
+      defaultReturn.name = defaults[Math.floor(Math.random() * defaults.length)];      
       defaultReturn.stat = generateInput();
-      defaultReturn.year = '1725-26';
+      defaultReturn.year = selectedYear;
+      defaultReturn.stat_name = 'ppg'
       console.log('Using default player data:', defaultReturn);
       console.log('currentNumber:', currentNumber);
       console.log('NewNumber:', newNumber);

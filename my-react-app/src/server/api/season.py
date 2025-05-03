@@ -32,12 +32,13 @@ def get_player_season_stat_team_year(stat_year: Stat_List_Teams_Year, db_con: co
         count_query = f'''SELECT COUNT(*) FROM player_season 
                           JOIN team on player_season.t_index = team.t_index
                           WHERE year = '{stat_year.year}' AND team.abr IN ({team_list_joined})'''
+        
         curs.execute(count_query)
         count_res = curs.fetchall()
         count = count_res[0][0]
 
-        rand = random.randint(1, count)
-        r = careers[rand-1]
+        rand = random.randint(0, count)
+        r = careers[rand]
 
         player = Player_Season(name=r[0],
                                stat_name = sum_list,
@@ -77,9 +78,9 @@ def get_player_season_stat_team(stat_year: Stat_List_Team, db_con: connection):
         count_res = curs.fetchall()
         count = count_res[0][0]
 
-        rand = random.randint(1, count)
+        rand = random.randint(0, count)
 
-        r = careers[rand-1]
+        r = careers[rand]
 
         player = Player_Season(name=r[0],
                                stat_name = sum_list,
@@ -104,7 +105,7 @@ def get_player_season_stat_team_acc_year(stat_year: Stat_List_Teams_Acc_Year, db
                     FROM player_season
                     JOIN player ON player_season.p_index = player.p_index
                     JOIN team ON player_season.t_index = team.t_index
-                    WHERE player.p_index IN (SELECT DISTINCT accolades.p_index FROM accolades WHERE accolades.year = player_season.year);;
+                    WHERE player.p_index IN (SELECT DISTINCT accolades.p_index FROM accolades WHERE accolades.year = player_season.year);
                     '''
         print(query)
         curs.execute(query)
@@ -121,7 +122,7 @@ def get_player_season_stat_team_acc_year(stat_year: Stat_List_Teams_Acc_Year, db
         print(f"LEN(careers): {len(careers)}")
         rand = random.randint(1, count)
 
-        r = careers[rand-1]
+        r = careers[rand]
 
         player = Player_Career(name=r[0],
                                stat_name = sum_list,
