@@ -8,10 +8,10 @@ import random
 def get_career(db_con: connection, stat: list[str]):
     curs = db_con.cursor()
     player = None
-    sum = " + ".join(stat)
+    sum_list = " + ".join(stat)
 
     try:
-        query = f'''SELECT name, SUM({sum})
+        query = f'''SELECT name, SUM({sum_list})
                     FROM career_stats 
                     JOIN player ON career_stats.p_index = player.p_index 
                     GROUP BY name;'''
@@ -28,7 +28,7 @@ def get_career(db_con: connection, stat: list[str]):
         r = careers[rand]
 
         player = Player_Career(name=r[0],
-                               stat_name = sum,
+                               stat_name = sum_list,
                                 stat = round(r[1],2))
     except psycopg2.Error as err:
         raise HTTPException(status_code=500, detail=str(err))
