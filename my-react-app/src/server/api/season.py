@@ -3,7 +3,7 @@ from psycopg2.extensions import connection
 from fastapi import HTTPException
 from typing import Any
 import random
-from server.api.models import Stat_List, Stat_List_Teams_Year, Stat_List_Team, Player_Season, Stat_List_Teams_Acc_Year
+from server.api.models import Stat_List, Stat_List_Teams_Year, Stat_List_Team, Player_Season, Stat_List_Teams_Acc_Year, Player_Career
 #from server.api.models import Player_Season
 
 def get_player_season_stat_team_year(stat_year: Stat_List_Teams_Year, db_con: connection):
@@ -99,35 +99,33 @@ def get_player_season_stat_team_acc_year(stat_year: Stat_List_Teams_Acc_Year, db
     team_list_joined = ", ".join(team_list)
 
     try:
-        query = f'''SELECT player.name, SUM({sum_list})
-                    FROM player_season 
-                    JOIN player ON player_season.p_index = player.p_index 
-                    JOIN team on player_season.t_index = team.t_index
-                    JOIN accolades ON accolades.p_index = player.p_index
-                    WHERE player_season.year = '{stat_year.year}'
-                    AND team.abr IN ({team_list_joined})
-                    AND player.p_index IN (SELECT p_index FROM accolades WHERE award = '{stat_year.accolade}')
-                    GROUP BY player.name;'''
-
+        query = f'''SELECT player.name, player_season.ppg
+                    FROM player_season
+                    JOIN player ON player_season.p_index = player.p_index
+                    JOIN team ON player_season.t_index = team.t_index
+                    WHERE player.p_index IN (SELECT DISTINCT accolades.p_index FROM accolades WHERE accolades.year = player_season.year);;
+                    '''
+        print(query)
         curs.execute(query)
 
         careers = curs.fetchall()
 
-        count_query = f'''SELECT COUNT(*) FROM player_season 
-                          JOIN team on player_season.t_index = team.t_index
-                          WHERE year = '{stat_year.year}' AND team.abr IN ({team_list_joined}) AND player_season.p_index IN (SELECT p_index FROM accolades WHERE award = '{stat_year.accolade}')'''
-        curs.execute(count_query)
+        count_query = f'''
+        SELECT COUNT(*) FROM accolades WHERE award = '{stat_year.accolade}'
+        '''
+
+        curs.execute(count_query, (stat_year.year, stat_year.teams, stat_year.accolade))
         count_res = curs.fetchall()
         count = count_res[0][0]
-
+        print(f"COUNT: {count}")
+        print(f"LEN(careers): {len(careers)}")
         rand = random.randint(1, count)
 
         r = careers[rand-1]
 
-        player = Player_Season(name=r[0],
+        player = Player_Career(name=r[0],
                                stat_name = sum_list,
-                                stat = round(r[1],2), 
-                                year = stat_year.year)
+                                stat = round(r[1],2))
     except psycopg2.Error as err:
         raise HTTPException(status_code=500, detail=str(err))
 
