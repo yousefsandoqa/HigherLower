@@ -28,7 +28,13 @@ def add_users(user: User, db_con: connection):
     count = count_res[0][0] + 1
 
     try: 
-        curs.execute('''INSERT INTO user_data ("index", name, score) VALUES (%s, %s, %s);''', (count, user.name, user.score))
+        check = '''SELECT * FROM user_data WHERE name = %s'''
+        curs.execute(check, (user.name,))
+        result = curs.fetchall()
+        if(len(result) == 0):
+            curs.execute('''INSERT INTO user_data ("index", name, score) VALUES (%s, %s, %s);''', (count, user.name, user.score))
+        else:
+            curs.execute('''UPDATE user_data SET score = %s WHERE name = %s;''', (user.score, user.name))
         db_con.commit()
     except psycopg2.Error as err:
         raise HTTPException(status_code=500, detail=str(err))

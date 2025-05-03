@@ -3,7 +3,7 @@ import axios from 'axios'
 import './App.css'
 
 function App() {
-  const [currentNumber, setCurrentNumber] = useState(Math.floor(Math.random() * 15)+1);
+  const [currentNumber, setCurrentNumber] = useState(0);
   const[newNumber, setNewNumber] = useState(0);
   const [score, setScore] = useState(0);
   const [gameStatus, setGameStatus] = useState('');
@@ -12,6 +12,7 @@ function App() {
   const [selectedTeam, setSelectedTeam] = useState('All Teams'); // Default team selection
   const [selectedYear, setSelectedYear] = useState('All Time'); // Default year selection
   const [player, setPlayer] = useState({name: '', year: ''}); // Player object with name and year
+  const [player2, setPlayer2] = useState({name: '', year: '', stat: 0}); // Player object with name and year
   const [leaders, setLeaders] = useState([]);
   const [username, setUsername] = useState('');
   const [scoreSubmitted, setScoreSubmitted] = useState(false);
@@ -145,16 +146,23 @@ function App() {
 
       // Get API data with payload of selectedTeam, selectedYear, and statCategory
       const playerData = await fetchPlayerData();
+      setPlayer2({
+        name: player.name,
+        stat: player.stat
+      })
       setCurrentNumber(newNumber);
       setNewNumber(playerData.stat);
       if (playerData) {
         setPlayer({
           name: playerData.name,
-          year: playerData.year
+          stat: playerData.stat_name
         });
         setNewNumber(playerData.stat);
-        setGameStatus(`Your new player is: ${playerData.name} (${playerData.year || 'All Time'})!`);
-      }
+        setGameStatus(
+          <span>
+            Does <strong>{playerData.name}</strong> have Higher or Lower statistic than the previous player in ({playerData.year || 'All Time'})!
+          </span>
+        );      }
     } else {
       setGameStatus(`Wrong! It was ${newNumber}. Game over.`);
       setIsGameOver(true);
@@ -174,19 +182,27 @@ function App() {
     
     // Get API data with payload of selectedTeam, selectedYear, and statCategory
     const playerData = await fetchPlayerData();
+    const playerData2 = await fetchPlayerData();
     
+    if (playerData2) {
+      setPlayer2({
+        name: playerData2.name,
+        year: playerData2.year,
+        stat: playerData2.stat_name
+      })
+    }
     if (playerData) {
       setPlayer({
         name: playerData.name,
-        year: playerData.year
+        stat: playerData.stat_name
       });
-      setCurrentNumber(playerData.stat+(Math.floor(Math.random() * 5)));
+      setCurrentNumber(playerData2.stat);
       setNewNumber(playerData.stat);
       console.log('Player data:', playerData);
       console.log('currentNumber:', currentNumber);
       console.log('NewNumber:', newNumber);
       // Use playerData.name directly instead of player.name from state
-      setGameStatus(`Your starting player is: ${playerData.name} (${playerData.year || 'All Time'})!`);
+      setGameStatus(`Does ${playerData.name} have Higher or Lower statistic than the previous player in (${playerData.year || 'All Time'})!`);
     } else {
       // setCurrentNumber(generateInput());
       setGameStatus('Failed to load player data. Using random number.');
@@ -297,9 +313,10 @@ function App() {
 
           <p className="status">{gameStatus}</p>
           <div className="number-display">{currentNumber}</div>
-          <div className="stat-category">Current Stat: {statCategory}</div>
-          <div className="team-category">Selected Team: {selectedTeam}</div>
-          <div className="year-category">Selected Year: {selectedYear}</div>
+          <div className="stat-category">
+            Previous Player: <strong>{player2.name}</strong>
+          </div>
+          <div className="year-category">Previous Stat: {player2.stat}</div>
           <div className="buttons">
             <button id="higher-btn" onClick={() => handleGuess('higher')} disabled={isGameOver}>Higher</button>
             <button id="lower-btn" onClick={() => handleGuess('lower')} disabled={isGameOver}>Lower</button>
