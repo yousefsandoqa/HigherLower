@@ -1,3 +1,5 @@
+#Various BaseModel Objects to regulate input and output of the API
+
 from pydantic import BaseModel
 
 class User(BaseModel):

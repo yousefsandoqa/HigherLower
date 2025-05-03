@@ -31,10 +31,21 @@ def add_users(user: User, db_con: connection):
         check = '''SELECT * FROM user_data WHERE name = %s'''
         curs.execute(check, (user.name,))
         result = curs.fetchall()
-        if(len(result) == 0):
-            curs.execute('''INSERT INTO user_data ("index", name, score) VALUES (%s, %s, %s);''', (count, user.name, user.score))
+        if(count - 1 >= 5):
+            if(len(result) == 0):
+                curs.execute('''SELECT index FROM user_data ORDER BY score ASC LIMIT 1''')
+                index = curs.fetchall()
+                index_num = index[0][0]
+                curs.execute('''DELETE FROM user_data WHERE index = %s;''', (index_num,)) 
+                curs.execute('''INSERT INTO user_data ("index", name, score) VALUES (%s, %s, %s);''', (index_num, user.name, user.score))
+            else:
+                curs.execute('''UPDATE user_data SET score = %s WHERE name = %s;''', (user.score, user.name))
         else:
-            curs.execute('''UPDATE user_data SET score = %s WHERE name = %s;''', (user.score, user.name))
+            if(len(result) == 0):
+                curs.execute('''INSERT INTO user_data ("index", name, score) VALUES (%s, %s, %s);''', (count, user.name, user.score))
+            else:
+                curs.execute('''UPDATE user_data SET score = %s WHERE name = %s;''', (user.score, user.name))
+    
         db_con.commit()
     except psycopg2.Error as err:
         raise HTTPException(status_code=500, detail=str(err))

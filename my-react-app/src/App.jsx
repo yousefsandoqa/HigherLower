@@ -114,13 +114,16 @@ function App() {
           };
           if (careerMode) {
             endpoint = 'http://127.0.0.1:8000/career';
+
           }
+          console.log("first: ", selectedTeam)
         } else if (selectedYear === 'All Time') {
           payload = {
             stat: [statCategory],
             teams: [selectedTeam],
           };
           endpoint = 'http://127.0.0.1:8000/season/stat_team';
+          console.log("second: ", selectedTeam)
         } else {
           payload = {
             stat: [statCategory],
@@ -129,7 +132,9 @@ function App() {
           };
           endpoint = 'http://127.0.0.1:8000/season/stat_team_year';
         }
-  }
+      }
+      console.log(endpoint)
+
       
       // Replace with your actual API endpoint
       const response = await axios.post(endpoint, payload);
@@ -343,12 +348,11 @@ function App() {
           </div>
 
 
-          { selectedTeam == 'All Teams' && selectedYear === 'All Time' &&
+          { selectedTeam == 'All Teams' && selectedYear === 'All Time' && statCategory != 'PPGA' &&
           <div className='career-mode'>
               <p>Use Player All Time Career</p>
-              <input type='checkbox' onSelect={handleCareerMode} />
+              <input type='checkbox'  checked={careerMode} onChange={handleCareerMode}  />          
           </div>}
-
           <div className="restart-section">
             <button className="start-button" onClick={restartGame}>
               {score > 0 ? 'Restart' : 'Start Game'}
