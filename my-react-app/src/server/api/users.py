@@ -4,6 +4,7 @@ from fastapi import HTTPException
 from typing import Any
 from server.api.models import User
 
+#returns the top 5 performers at the game in descending order like a traditional leaderboard
 def get_users(db_con: connection):
     curs = db_con.cursor()
     users = []
@@ -19,7 +20,8 @@ def get_users(db_con: connection):
         raise HTTPException(status_code=500, detail=str(err))
 
     return users
-        
+
+# adds a user to the game and updates the sciore with the game performance
 def add_users(user: User, db_con: connection):
     curs = db_con.cursor()
     count_query = '''SELECT COUNT(*) FROM user_data'''

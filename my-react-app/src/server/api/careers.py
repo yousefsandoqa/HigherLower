@@ -5,10 +5,11 @@ from typing import Any
 from server.api.models import Player_Career
 import random
 
+# gets a random career for a player and retrieves the summation of requested carrer stats and their name
 def get_career(db_con: connection, stat: list[str]):
     curs = db_con.cursor()
     player = None
-    sum_list = " + ".join(stat)
+    sum_list = " + ".join(stat) #sums up the list of stats that are requested and puts it as a string for the query
 
     try:
         query = f'''SELECT name, SUM({sum_list})
@@ -25,7 +26,7 @@ def get_career(db_con: connection, stat: list[str]):
 
         rand = random.randint(1, count)
 
-        r = careers[rand]
+        r = careers[rand - 1]
 
         player = Player_Career(name=r[0],
                                stat_name = sum_list,
